@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
 const errorHandler = require('./middleware/errorHandler');
+const {loginMiddleware} = require('./middleware/auth');
 const { rateLimit } = require('express-rate-limit')
 
 
@@ -39,67 +40,7 @@ app.use('/api/v1/chapters', chapters);
 app.use('/api/v1/chapter', chapter);      
 
 // Auth routes for admin login
-app.post('/api/v1/auth/login', async (req, res) => {
-  try {
-      const { email, password } = req.body;
-
-        if (!email || !password) {
-        console.log('Missing email or password');
-        return res.status(400).json({
-          success: false,
-          error: 'Please provide email and password',
-        });
-      }
-      console.log("Login request received");
-
-      // Simple admin check (in production, use proper user model)
-      if (email === process.env.ADMIN_EMAIL && password === process.env.ADMIN_PASSWORD) {
-          // In a real app, create a proper user and use JWT
-          console.log("Admin credentials match");
-
-        const User = require('./models/User');
-        
-        let adminUser = await User.findOne({ email: process.env.ADMIN_EMAIL });
-        console.log("Admin user lookup complete:", adminUser);
-
-          if (!adminUser) {
-              console.log("Creating new admin user...");
-
-            adminUser = await User.create({
-            email: process.env.ADMIN_EMAIL,
-            password: process.env.ADMIN_PASSWORD,
-            role: 'admin',
-          });
-          console.log("Admin user created");
-    
-        }
-
-        const token = adminUser.getSignedJwtToken();
-        console.log("Token generated");
-
-        res.status(200).json({
-          success: true,
-          token,
-          user: {
-            id: adminUser._id,
-            email: adminUser.email,
-            role: adminUser.role,
-          },
-        });
-      } else {
-        console.log("Invalid credentials");
-        res.status(401).json({
-          success: false,
-          error: 'Invalid credentials',
-        });
-      }
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      error: 'Server error',
-    });
-  }
-});
+app.post('/api/v1/auth/login', loginMiddleware);
 
 // 404 handler
 app.all('/{*any}', (req, res) => {
