@@ -2,6 +2,8 @@
 
 A RESTful API backend for managing chapter performance data with MongoDB, Redis caching, and comprehensive rate limiting.
 
+[Live Demo](https://chapter-performance-apii.onrender.com/api/v1/chapters?limit=100)
+
 ## Overview
 
 This application provides a robust backend service for managing educational chapter performance data. It implements modern caching strategies, authentication mechanisms, and performance optimization techniques suitable for production environments.
@@ -32,7 +34,7 @@ This application provides a robust backend service for managing educational chap
 **Deployment**
 * MongoDB (local instance or MongoDB Atlas)
 * Redis (local instance or Redis Cloud using UpStash)
-* Backend deployed on Render
+* Backend deployed on Render 
 
 ## Architecture
 
